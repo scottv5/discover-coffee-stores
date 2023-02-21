@@ -1,9 +1,10 @@
+@import url("https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@300&family=Nunito:wght@200;300&display=swap");
 :root {
   --max-width: 1100px;
   --border-radius: 12px;
-  --font-mono: ui-monospace, Menlo, Monaco, 'Cascadia Mono', 'Segoe UI Mono',
-    'Roboto Mono', 'Oxygen Mono', 'Ubuntu Monospace', 'Source Code Pro',
-    'Fira Mono', 'Droid Sans Mono', 'Courier New', monospace;
+  --font-mono: ui-monospace, Menlo, Monaco, "Cascadia Mono", "Segoe UI Mono",
+    "Roboto Mono", "Oxygen Mono", "Ubuntu Monospace", "Source Code Pro",
+    "Fira Mono", "Droid Sans Mono", "Courier New", monospace;
 
   --foreground-rgb: 0, 0, 0;
   --background-start-rgb: 214, 219, 220;
@@ -42,6 +43,11 @@
 
 @media (prefers-color-scheme: dark) {
   :root {
+    --text-purple: rgba(67, 56, 202, 1);
+    --text-purple-dark: rgba(79, 70, 229, 1);
+    --text-black: rgba(17, 24, 39, 1);
+    --text-white-100: rgba(229, 231, 235, 1);
+
     --foreground-rgb: 255, 255, 255;
     --background-start-rgb: 0, 0, 0;
     --background-end-rgb: 0, 0, 0;
@@ -86,13 +92,15 @@ body {
 }
 
 body {
+  font-family: "Nunito", sans-serif;
+  font-weight: 300;
   color: rgb(var(--foreground-rgb));
-  background: linear-gradient(
-      to bottom,
-      transparent,
-      rgb(var(--background-end-rgb))
-    )
-    rgb(var(--background-start-rgb));
+  background: url("../public/static/background-gradient.png");
+  background-position: 50%;
+  background-repeat: no-repeat;
+  background-size: cover;
+  color: #373b64;
+  height: 100%;
 }
 
 a {
