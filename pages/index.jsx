@@ -4,12 +4,14 @@ import Image from "next/image";
 import Banner from "../components/banner.component";
 import Card from "../components/card.component";
 import styles from "@/styles/Home.module.css";
-import COFFEE_STORES_DATA from "../data/coffee-stores.json";
+import useTrackLocation from "../hooks/use-track-location.js";
+
+import { useEffect, useContext, useState } from "react";
+
 import { fetchCoffeeStores } from "../lib/coffee-stores";
+import { StoreContext, ACTION_TYPES } from "../context/store-contex";
 
-//import "tailwindcss/tailwind.css";
-
-export async function getStaticProps(context) {
+export async function getStaticProps() {
   const data = await fetchCoffeeStores();
   return {
     props: { coffeeStores: data },
@@ -17,8 +19,40 @@ export async function getStaticProps(context) {
 }
 
 export default function Home({ coffeeStores }) {
+  const [coffeeStoresErr, setCoffeeStoresErr] = useState(null);
+  const {
+    state: { latLong, coffeeStoresInState },
+    dispatch,
+  } = useContext(StoreContext);
+
+  const { handleTrackLocation, locErrMessage, isLoading } = useTrackLocation();
+
+  useEffect(() => {
+    const asyncFetchCoffeeStores = async () => {
+      if (latLong) {
+        try {
+          const fetchedCoffeeStores = await fetch(
+            `/api/getCoffeeStoresByLocation?latLong=${latLong}&limit=6`
+          ).then((res) => res.json());
+
+          dispatch({
+            type: ACTION_TYPES.SET_COFFEE_STORES,
+            payload: fetchedCoffeeStores,
+          });
+          setCoffeeStoresErr("");
+        } catch (e) {
+          console.log(e);
+          setCoffeeStoresErr(e.message);
+        }
+      }
+    };
+    asyncFetchCoffeeStores();
+  }, [latLong, dispatch]);
+
   const handleOnBannerButtonClick = () => {
-    console.log("button clicked");
+    handleTrackLocation();
+    if (locErrMessage) setCoffeeStoresErr(locErrMessage);
+    console.log(coffeeStoresErr);
   };
   return (
     <div className={styles.container}>
@@ -27,7 +61,7 @@ export default function Home({ coffeeStores }) {
       </Head>
       <main className={styles.main}>
         <Banner
-          buttonText={"Click me"}
+          buttonText={isLoading ? "...Loading" : "Click me"}
           handleOnClick={handleOnBannerButtonClick}
         />
         <div className={styles.heroImage}>
@@ -40,18 +74,37 @@ export default function Home({ coffeeStores }) {
           />
         </div>
 
-        {coffeeStores && coffeeStores.length ? (
+        {coffeeStoresInState && coffeeStoresInState.length ? (
           <>
-            <div className={styles.heading2}>Lorem Ipsum Dolor</div>
+            <div className={styles.heading2}>Near You</div>
             <div className={styles.cardLayout}>
-              {coffeeStores.map(({ fsq_id, name, imgUrl, slug }) => {
+              {coffeeStoresInState.map(({ id, name, image }) => {
                 return (
                   <Card
                     name={name}
-                    imgUrl={imgUrl}
-                    slug={slug}
+                    imgUrl={image}
+                    slug={id}
                     className={styles.card}
-                    key={fsq_id}
+                    key={id}
+                  ></Card>
+                );
+              })}
+            </div>
+          </>
+        ) : null}
+
+        {coffeeStores && coffeeStores.length ? (
+          <>
+            <div className={styles.heading2}>New York</div>
+            <div className={styles.cardLayout}>
+              {coffeeStores.map(({ id, name, image }) => {
+                return (
+                  <Card
+                    name={name}
+                    imgUrl={image}
+                    slug={id}
+                    className={styles.card}
+                    key={id}
                   ></Card>
                 );
               })}

@@ -37,6 +37,8 @@
 
 .cardImageWrapper {
   color: var(--text-white-100);
+  display: flex;
+  justify-content: center;
 }
 
 .cardImage {
