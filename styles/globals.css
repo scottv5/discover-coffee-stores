@@ -97,7 +97,7 @@ body {
   font-family: "IBM Plex Sans", "Nunito", sans-serif;
   font-weight: 300;
   color: rgb(var(--foreground-rgb));
-  background: url("../public/static/background-gradient.png");
+  background: url("@/public/static/background-gradient.png");
   background-position: 50%;
   background-repeat: no-repeat;
   background-size: cover;
